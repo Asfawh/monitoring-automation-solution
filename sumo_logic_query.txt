@@ -1,0 +1,8 @@
+_sourceCategory=prod/api
+| parse "response_time=*ms" as response_time
+| where response_time > 3000
+| where endpoint="/api/data"
+| timeslice 1m
+| count by _timeslice
+| where _count > 5
+| sort by _timeslice asc
