@@ -1,5 +1,7 @@
 import boto3
 import logging
+import os
+
 
 # Initialize the logger
 logger = logging.getLogger()
@@ -10,8 +12,8 @@ ec2 = boto3.client('ec2')
 sns = boto3.client('sns')
 
 # Environment variables
-INSTANCE_ID = 'your-instance-id'
-SNS_TOPIC_ARN = 'your-sns-topic-arn'
+INSTANCE_ID = os.getenv('INSTANCE_ID')
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
 
 def lambda_handler(event, context):
     try:
