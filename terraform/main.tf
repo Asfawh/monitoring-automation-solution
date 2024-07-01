@@ -1,7 +1,3 @@
-provider "aws" {
-  region = var.region
-}
-
 resource "aws_instance" "web" {
   ami           = var.ami
   instance_type = var.instance_type
@@ -37,13 +33,19 @@ resource "aws_iam_role" "lambda_exec" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Action    = "sts:AssumeRole"
-      Effect    = "Allow"
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
       Principal = {
         Service = "lambda.amazonaws.com"
       }
     }]
   })
+  // Add any additional policies required by the Lambda function
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    "arn:aws:iam::aws:policy/AmazonEC2FullAccess", // Ensure you have the necessary policies
+    "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
+  ]
 }
 
 resource "aws_iam_role_policy" "lambda_policy" {
@@ -63,12 +65,4 @@ resource "aws_iam_role_policy" "lambda_policy" {
       }
     ]
   })
-}
-
-output "instance_id" {
-  value = aws_instance.web.id
-}
-
-output "sns_topic_arn" {
-  value = aws_sns_topic.alerts.arn
 }
